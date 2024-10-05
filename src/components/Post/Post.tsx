@@ -1,31 +1,51 @@
-import React, { useState } from "react";
+import React, { useState, ChangeEvent, FormEvent } from "react";
 import styles from "./Post.module.css";
 import Comment from "../Comment/Comment";
 import Avatar from "../Avatar/Avatar";
 import moment from "moment";
 
-const Post = ({ author, publishedAt, content }) => {
-  const [comments, setComments] = useState(["Post muito bacana, hein?!"]);
-  const [newCommentText, setNewCommentText] = useState("");
+interface Author {
+  avatarUrl: string;
+  name: string;
+  role: string;
+}
+
+interface Content {
+  type: "paragraph" | "link";
+  content: string;
+}
+
+interface PostProps {
+  author: Author;
+  publishedAt: string | Date;
+  content: Content[];
+}
+
+const Post: React.FC<PostProps> = ({ author, publishedAt, content }) => {
+  const [comments, setComments] = useState<string[]>([
+    "Post muito bacana, hein?!",
+  ]);
+  const [newCommentText, setNewCommentText] = useState<string>("");
+
   const dateFormat = moment(publishedAt).format("l");
   const publishedDateRelativeToNow = moment(dateFormat, "YYYYMMDD").fromNow();
 
-  const handleCreateNewComment = (e) => {
+  const handleCreateNewComment = (e: FormEvent) => {
     e.preventDefault();
     setComments([...comments, newCommentText]);
     setNewCommentText("");
   };
 
-  const handleNewCommentChange = (e) => {
+  const handleNewCommentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     e.target.setCustomValidity("");
     setNewCommentText(e.target.value);
   };
 
-  const handleNewCommentInvalid = () => {
-    event.target.setCustomValidity("Esse campo é obrigatório!");
+  const handleNewCommentInvalid = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    e.target.setCustomValidity("Esse campo é obrigatório!");
   };
 
-  const deleteComment = (commentToDelete) => {
+  const deleteComment = (commentToDelete: string) => {
     const commentsWithoutDeletedOne = comments.filter((comment) => {
       return comment !== commentToDelete;
     });
@@ -45,7 +65,7 @@ const Post = ({ author, publishedAt, content }) => {
           </div>
         </div>
 
-        <time title={dateFormat} dateTime="11 de Maio às 08:13h">
+        <time title={dateFormat} dateTime={String(publishedAt)}>
           {publishedDateRelativeToNow}
         </time>
       </header>
@@ -71,7 +91,7 @@ const Post = ({ author, publishedAt, content }) => {
           onChange={handleNewCommentChange}
           value={newCommentText}
           placeholder="Deixe um comentário"
-          onIsvalid={handleNewCommentInvalid}
+          onInvalid={handleNewCommentInvalid}
           required
         />
 

@@ -4,7 +4,25 @@ import SideBar from "./components/Sidebar/Sidebar";
 import "./global.css";
 import styles from "./app.module.css";
 
-const posts = [
+interface Author {
+  avatarUrl: string;
+  name: string;
+  role: string;
+}
+
+interface Content {
+  type: "paragraph" | "link";
+  content: string;
+}
+
+interface PostType {
+  id: number;
+  author: Author;
+  content: Content[];
+  publishedAt: string | Date;
+}
+
+const posts: PostType[] = [
   {
     id: 1,
     author: {
@@ -49,7 +67,7 @@ function App() {
       <Header />
 
       <div className={styles.wrapper}>
-        <SideBar>sidebar</SideBar>
+        <SideBar />
         <main>
           {posts.map((post) => {
             return (
